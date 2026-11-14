@@ -1,1 +1,230 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090d18">
+<title>TubeTool - YouTube Creator Toolkit</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090d18;color:#f5f7ff;font-family:Arial,sans-serif}
+header{padding:20px 16px;background:#11182a;border-bottom:1px solid #27334b;position:sticky;top:0;z-index:5}
+.brand{font-size:25px;font-weight:900;color:#fff}
+.brand span{color:#42a5ff}
+header p{color:#9aa9c3;font-size:12px;margin:6px 0 0}
+.container{max-width:850px;margin:auto;padding:20px 15px}
+.hero{text-align:center;padding:30px 10px}
+.hero h1{font-size:29px;margin:0 0 12px}
+.hero h1 span{color:#42a5ff}
+.hero p{color:#9aa9c3;line-height:1.6;font-size:14px}
+.search{display:flex;gap:8px;margin-top:20px}
+input,textarea,select{width:100%;background:#111a2d;color:white;border:1px solid #34415c;padding:13px;border-radius:10px;font-size:14px;outline:none}
+button{background:#2389ed;color:white;border:0;border-radius:10px;padding:12px 16px;font-weight:bold;cursor:pointer}
+button:active{opacity:.75}
+.tools{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px}
+.tool{background:#121b2e;border:1px solid #293752;padding:17px;border-radius:14px;cursor:pointer}
+.tool:hover,.tool.active{border-color:#2389ed;background:#182641}
+.tool .emoji{font-size:25px}
+.tool h3{font-size:15px;margin:12px 0 6px}
+.tool p{font-size:12px;color:#9aa9c3;margin:0;line-height:1.5}
+.panel{background:#121b2e;border:1px solid #293752;border-radius:15px;padding:18px;margin-top:22px}
+.panel h2{font-size:19px;margin-top:0}
+.panel label{display:block;font-size:13px;color:#b8c6dd;margin:15px 0 7px}
+.panel button{margin-top:12px}
+.result{background:#0b1220;padding:13px;border-radius:10px;margin-top:13px;overflow-wrap:anywhere;font-size:13px;line-height:1.7}
+.result img{max-width:100%;border-radius:9px;margin-top:10px}
+.hidden{display:none}
+.muted{color:#9aa9c3;font-size:12px;line-height:1.6}
+footer{text-align:center;color:#7888a4;padding:30px 10px;font-size:12px}
+a{color:#59b0ff}
+@media(min-width:650px){.tools{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand">Tube<span>Tool</span></div>
+ <p>All-in-One YouTube Creator Toolkit</p>
+</header>
+
+<main class="container">
+<section class="hero">
+ <h1>Create Better <span>YouTube Videos</span></h1>
+ <p>Free tools for YouTube creators. Thumbnails, SEO, video analysis and more in one place.</p>
+ <div class="search">
+  <input id="mainUrl" placeholder="Paste YouTube video URL">
+  <button onclick="loadThumbnail()">Go</button>
+ </div>
+</section>
+
+<h2>Explore Creator Tools</h2>
+<div class="tools">
+ <div class="tool" onclick="showTool('thumb')"><div class="emoji">🖼️</div><h3>Thumbnail Downloader</h3><p>Preview and save available thumbnails.</p></div>
+ <div class="tool" onclick="showTool('video')"><div class="emoji">🎬</div><h3>Video Downloader</h3><p>Access official download options for your own videos.</p></div>
+ <div class="tool" onclick="showTool('analyze')"><div class="emoji">📊</div><h3>Video Analyzer</h3><p>Open video details and inspect its link.</p></div>
+ <div class="tool" onclick="showTool('title')"><div class="emoji">✍️</div><h3>SEO Title Generator</h3><p>Generate catchy video title ideas.</p></div>
+ <div class="tool" onclick="showTool('tags')"><div class="emoji">🏷️</div><h3>Tags Generator</h3><p>Create relevant keyword suggestions.</p></div>
+ <div class="tool" onclick="showTool('desc')"><div class="emoji">📝</div><h3>Description Generator</h3><p>Create a ready-to-edit description.</p></div>
+ <div class="tool" onclick="showTool('channel')"><div class="emoji">👤</div><h3>Channel Tools</h3><p>Open channel and handle tools.</p></div>
+</div>
+
+<section class="panel hidden" id="thumb">
+ <h2>🖼️ Thumbnail Downloader</h2>
+ <label>YouTube Video URL</label>
+ <input id="thumbUrl" placeholder="https://youtube.com/watch?v=...">
+ <button onclick="getThumb()">Get Thumbnail</button>
+ <div id="thumbResult" class="result hidden"></div>
+ <p class="muted">Only publicly available thumbnails can be retrieved. Image quality depends on what the video provides.</p>
+</section>
+
+<section class="panel hidden" id="video">
+ <h2>🎬 Video Download Options</h2>
+ <label>Your YouTube video URL</label>
+ <input id="videoUrl" placeholder="Paste your video URL">
+ <label>Quality preference</label>
+ <select id="quality">
+ <option>144p</option><option>240p</option><option>360p</option>
+ <option>480p</option><option>720p</option><option selected>1080p</option>
+ </select>
+ <button onclick="videoOptions()">Continue</button>
+ <div id="videoResult" class="result hidden"></div>
+ <p class="muted">For videos you own or are authorized to download, use YouTube Studio's official download feature. This tool does not bypass YouTube restrictions or download third-party videos.</p>
+</section>
+
+<section class="panel hidden" id="analyze">
+ <h2>📊 Video Analyzer</h2>
+ <label>Video URL</label>
+ <input id="analyzeUrl" placeholder="Paste YouTube URL">
+ <button onclick="analyzeVideo()">Analyze Link</button>
+ <div id="analyzeResult" class="result hidden"></div>
+</section>
+
+<section class="panel hidden" id="title">
+ <h2>✍️ SEO Title Generator</h2>
+ <label>Video topic</label>
+ <input id="titleTopic" placeholder="Enter your video topic">
+ <button onclick="generateTitles()">Generate Titles</button>
+ <div id="titleResult" class="result hidden"></div>
+</section>
+
+<section class="panel hidden" id="tags">
+ <h2>🏷️ Tags Generator</h2>
+ <label>Video topic</label>
+ <input id="tagTopic" placeholder="Enter your topic">
+ <button onclick="generateTags()">Generate Tags</button>
+ <div id="tagResult" class="result hidden"></div>
+</section>
+
+<section class="panel hidden" id="desc">
+ <h2>📝 Description Generator</h2>
+ <label>Video title</label>
+ <input id="descTitle" placeholder="Enter video title">
+ <label>Channel name</label>
+ <input id="descChannel" placeholder="Enter channel name">
+ <button onclick="generateDesc()">Generate Description</button>
+ <div id="descResult" class="result hidden"></div>
+</section>
+
+<section class="panel hidden" id="channel">
+ <h2>👤 Channel Tools</h2>
+ <label>Channel URL or @Handle</label>
+ <input id="channelInput" placeholder="https://youtube.com/@channel">
+ <button onclick="channelOpen()">Open Channel</button>
+ <p class="muted">This opens the supplied public channel link. It does not claim to verify handle availability.</p>
+</section>
+</main>
+
+<footer>
+ <strong>TubeTool</strong><br>
+ Made for YouTube Creators<br><br>
+ Use content only when you have the necessary rights or permission.
+</footer>
+
+<script>
+function showTool(id){
+ document.querySelectorAll('.panel').forEach(p=>p.classList.add('hidden'));
+ document.getElementById(id).classList.remove('hidden');
+ document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+function videoId(url){
+ try{
+  let u=new URL(url);
+  if(u.hostname.includes('youtu.be'))return u.pathname.slice(1);
+  if(u.searchParams.get('v'))return u.searchParams.get('v');
+  let m=u.pathname.match(/\/(?:shorts|embed)\/([^/?]+)/);
+  return m?m[1]:null;
+ }catch(e){return null}
+}
+function loadThumbnail(){
+ document.getElementById('thumbUrl').value=document.getElementById('mainUrl').value;
+ showTool('thumb');getThumb();
+}
+function getThumb(){
+ let id=videoId(document.getElementById('thumbUrl').value);
+ let r=document.getElementById('thumbResult');
+ r.classList.remove('hidden');
+ if(!id){r.textContent='Please enter a valid YouTube URL.';return}
+ let base='https://i.ytimg.com/vi/'+encodeURIComponent(id)+'/';
+ let qualities=['maxresdefault.jpg','sddefault.jpg','hqdefault.jpg','mqdefault.jpg'];
+ r.innerHTML='<p>Choose an available thumbnail quality:</p>'+
+ qualities.map(q=>'<p><a target="_blank" rel="noopener" href="'+base+q+'">'+q.replace('.jpg','')+'</a></p>').join('')+
+ '<img src="'+base+'hqdefault.jpg" alt="Thumbnail preview">';
+}
+function videoOptions(){
+ let id=videoId(document.getElementById('videoUrl').value);
+ let r=document.getElementById('videoResult');
+ r.classList.remove('hidden');
+ if(!id){r.textContent='Please enter a valid YouTube URL.';return}
+ r.innerHTML='Open <a target="_blank" rel="noopener" href="https://studio.youtube.com/">YouTube Studio</a> and select Content, then the video menu and Download if available. Requested quality: '+document.getElementById('quality').value+'.';
+}
+function analyzeVideo(){
+ let url=document.getElementById('analyzeUrl').value;
+ let id=videoId(url);
+ let r=document.getElementById('analyzeResult');
+ r.classList.remove('hidden');
+ if(!id){r.textContent='Invalid YouTube URL.';return}
+ r.innerHTML='Video ID: '+id+'<br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v='+encodeURIComponent(id)+'">Open Video</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v='+encodeURIComponent(id)+'">View on YouTube</a>';
+}
+function generateTitles(){
+ let t=document.getElementById('titleTopic').value.trim();
+ let r=document.getElementById('titleResult');
+ r.classList.remove('hidden');
+ if(!t){r.textContent='Enter a topic first.';return}
+ let arr=['Everything You Need to Know About '+t,'I Tried '+t+' – Here Is What Happened','Top Facts About '+t,'The Truth About '+t,'How '+t+' Works – Explained'];
+ r.innerHTML=arr.map((x,i)=>(i+1)+'. '+escapeHTML(x)+'<br>').join('')+'<button onclick="copyText('+JSON.stringify(arr.join('\n'))+')">Copy All Titles</button>';
+}
+function generateTags(){
+ let t=document.getElementById('tagTopic').value.trim();
+ let r=document.getElementById('tagResult');
+ r.classList.remove('hidden');
+ if(!t){r.textContent='Enter a topic first.';return}
+ let words=t.toLowerCase().split(/\s+/);
+ let tags=[t,...words,'how to '+t,t+' explained',t+' tutorial',t+' tips',t+' hindi','youtube shorts'];
+ let output=[...new Set(tags)].join(', ');
+ r.innerHTML=escapeHTML(output)+'<br><button onclick="copyText('+JSON.stringify(output)+')">Copy Tags</button>';
+}
+function generateDesc(){
+ let t=document.getElementById('descTitle').value.trim();
+ let c=document.getElementById('descChannel').value.trim()||'My Channel';
+ let r=document.getElementById('descResult');
+ r.classList.remove('hidden');
+ if(!t){r.textContent='Enter a video title first.';return}
+ let d=t+'\n\nWelcome to '+c+'!\n\nIn this video, we explore '+t+'. Watch till the end and share your thoughts in the comments.\n\nSubscribe for more videos!\n\n#YouTube #Hindi #'+t.split(' ')[0].replace(/[^a-z0-9]/gi,'');
+ r.innerHTML=escapeHTML(d)+'<br><button onclick="copyText('+JSON.stringify(d)+')">Copy Description</button>';
+}
+function channelOpen(){
+ let v=document.getElementById('channelInput').value.trim();
+ if(!v){alert('Enter a channel URL or handle');return}
+ let url=v.startsWith('@')?'https://www.youtube.com/'+v:v.startsWith('http')?v:'https://www.youtube.com/@'+v;
+ window.open(url,'_blank','noopener');
+}
+function copyText(t){
+ navigator.clipboard.writeText(t).then(()=>alert('Copied!')).catch(()=>alert('Copy not supported. Select the text and copy it.'));
+}
+function escapeHTML(s){
+ return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
+
